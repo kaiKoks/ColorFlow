@@ -20,7 +20,6 @@ function addStyles(brightness, contrast, hue, grayscale) {
   styleTag.textContent = `
       html, body {
         filter: brightness(${brightness}%) contrast(${contrast}%) hue-rotate(${hue}deg) grayscale(${grayscale}%) !important;
-        transition: filter 0.3s ease;
       }
     `
   document.head.appendChild(styleTag)

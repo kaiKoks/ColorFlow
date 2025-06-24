@@ -23,23 +23,23 @@ function App() {
         setGrayscale(0)
         applyFilter()
     }
+    useEffect(() => { console.log(grayscale) })
     const load = () => {
         try {
-            chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => {
-                setBrightness(result.brightness ?? 100)
-                setContrast(result.contrast ?? 100)
-                setHue(result.hue ?? 0)
-                setGrayscale(result.grayscale ?? 0)
-                applyFilter()
-                //chrome.storage.local.set({ 'brightness': brightness, 'contrast': contrast, 'hue': hue, 'grayscale': grayscale });
+            chrome.storage.local.get(['brightness', 'contrast', 'hue', 'grayscale'], (result) => {
+                setBrightness(result.brightness)
+                setContrast(result.contrast)
+                setHue(result.hue)
+                setGrayscale(result.grayscale)
             });
         }
         catch (err) {
             console.error(err)
         }
     }
-    useEffect(()=> {load()}, [])
-    //useEffect(() => { applyFilter() }, [brightness, contrast, hue, grayscale])
+    useEffect(() => { load() }, [])
+    useEffect(() => { applyFilter() }, [brightness, contrast, hue, grayscale])
+
     return (
         <div className="w-64 p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <h1 className="text-lg font-bold mb-4">Настройки фильтра</h1>
@@ -51,7 +51,7 @@ function App() {
                     min="50"
                     max="150"
                     value={brightness}
-                    onChange={(e) => {setBrightness(Number(e.target.value)); applyFilter()}}
+                    onChange={(e) => setBrightness(Number(e.target.value))}
                     className="w-full"
                 />
             </div>
@@ -63,7 +63,7 @@ function App() {
                     min="50"
                     max="150"
                     value={contrast}
-                    onChange={(e) => {setContrast(Number(e.target.value)); applyFilter()}}
+                    onChange={(e) => setContrast(Number(e.target.value))}
                     className="w-full"
                 />
             </div>
@@ -75,7 +75,7 @@ function App() {
                     min="0"
                     max="360"
                     value={hue}
-                    onChange={(e) => {setHue(Number(e.target.value)); applyFilter()}}
+                    onChange={(e) => setHue(Number(e.target.value))}
                     className="w-full"
                 />
             </div>
@@ -86,7 +86,7 @@ function App() {
                     min="0"
                     max="100"
                     value={grayscale}
-                    onChange={(e) => {setGrayscale(Number(e.target.value)); applyFilter()}}
+                    onChange={(e) => setGrayscale(Number(e.target.value))}
                     className="w-full"
                 />
             </div>
