@@ -6,12 +6,13 @@ function App() {
     const [brightness, setBrightness] = useState(100)
     const [contrast, setContrast] = useState(100)
     const [hue, setHue] = useState(0)
+    const [grayscale, setGrayscale] = useState(0)
 
     const applyFilter = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
             chrome.tabs.sendMessage(tab.id, {
                 type: 'SET_FILTER',
-                payload: { brightness, contrast, hue }
+                payload: { brightness, contrast, hue, grayscale }
             });
         });
     }
@@ -19,21 +20,26 @@ function App() {
         setBrightness(100)
         setContrast(100)
         setHue(0)
+        setGrayscale(0)
         applyFilter()
     }
-    useEffect(() => {
+    const load = () => {
         try {
             chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => {
-                setBrightness(result.brightness ?? 100);
-                setContrast(result.contrast ?? 100);
-                setHue(result.hue ?? 0);
-                chrome.storage.local.set({ 'brightness': brightness, 'contrast': contrast, 'hue': hue });
+                setBrightness(result.brightness ?? 100)
+                setContrast(result.contrast ?? 100)
+                setHue(result.hue ?? 0)
+                setGrayscale(result.grayscale ?? 0)
+                applyFilter()
+                //chrome.storage.local.set({ 'brightness': brightness, 'contrast': contrast, 'hue': hue, 'grayscale': grayscale });
             });
         }
         catch (err) {
             console.error(err)
         }
-    }, [chrome.tabs])
+    }
+    useEffect(()=> {load()}, [])
+    //useEffect(() => { applyFilter() }, [brightness, contrast, hue, grayscale])
     return (
         <div className="w-64 p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <h1 className="text-lg font-bold mb-4">Настройки фильтра</h1>
@@ -45,8 +51,7 @@ function App() {
                     min="50"
                     max="150"
                     value={brightness}
-                    onChange={(e) => setBrightness(Number(e.target.value))}
-                    onInput={applyFilter}
+                    onChange={(e) => {setBrightness(Number(e.target.value)); applyFilter()}}
                     className="w-full"
                 />
             </div>
@@ -58,8 +63,7 @@ function App() {
                     min="50"
                     max="150"
                     value={contrast}
-                    onChange={(e) => setContrast(Number(e.target.value))}
-                    onInput={applyFilter}
+                    onChange={(e) => {setContrast(Number(e.target.value)); applyFilter()}}
                     className="w-full"
                 />
             </div>
@@ -71,12 +75,21 @@ function App() {
                     min="0"
                     max="360"
                     value={hue}
-                    onChange={(e) => setHue(Number(e.target.value))}
-                    onInput={applyFilter}
+                    onChange={(e) => {setHue(Number(e.target.value)); applyFilter()}}
                     className="w-full"
                 />
             </div>
-
+            <div className="mb-4">
+                <label className="block text-sm mb-1">grayscale: {grayscale}%</label>
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={grayscale}
+                    onChange={(e) => {setGrayscale(Number(e.target.value)); applyFilter()}}
+                    className="w-full"
+                />
+            </div>
             <button
                 onClick={reset}
                 className="w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded"
