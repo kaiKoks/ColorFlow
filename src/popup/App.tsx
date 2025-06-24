@@ -1,46 +1,31 @@
 import React, { useState } from "react"
 import { createRoot } from "react-dom/client"
-
-declare const chrome: {
-    tabs: {
-        query: (
-            properties: { active: boolean; currentWindow: boolean },
-            callback: (tabs: Array<{ id: number }>) => void
-        ) => void
-    }
-    scripting: {
-        executeScript: (
-            details: {
-                target: { tabId: number }
-                func: string | Function
-                args?: any[]
-            },
-            callback?: () => void
-        ) => void
-    }
+declare namespace chrome {
+  namespace tabs {
+    function query(queryInfo: any, callback: (tabs: Array<{ id: number }>) => void): void;
+    function sendMessage(tabId: number, message: any, callback?: (response: any) => void): void;
+  }
 }
 
 function App() {
-    const [brightness, setBrightness] = useState(100);
-    const [contrast, setContrast] = useState(100);
-    const [hue, setHue] = useState(0);
+    const [brightness, setBrightness] = useState(100)
+    const [contrast, setContrast] = useState(100)
+    const [hue, setHue] = useState(0)
 
-    const applyFilter = () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                func: applyFilterToPage,
-                args: [brightness, contrast, hue],
+    const applyFilter = async () => {
+        await chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+            chrome.tabs.sendMessage(tab.id!, {
+                type: 'SET_FILTER',
+                payload: { brightness, contrast, hue }
             });
         });
-    };
+    }
     const reset = () => {
-        setBrightness(100);
-        setContrast(100);
-        setHue(0);
-        applyFilter();
-    };
-
+        setBrightness(100)
+        setContrast(100)
+        setHue(0)
+        applyFilter()
+    }
     return (
         <div className="w-64 p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <h1 className="text-lg font-bold mb-4">Настройки фильтра</h1>

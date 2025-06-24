@@ -1,19 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "Video Speed Controller",
+  "name": "Brightness Controller",
   "version": "1.0",
-  "description": "Control video speed",
-  "icons": {
-  },
+  "description": "Control brightness, hue and contrast",
+  "icons": {},
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/content/content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/content/content.js"
+      ],
       "run_at": "document_end"
     }
   ],
   "action": {
     "default_popup": "src/popup/index.html"
   },
-  "permissions": ["storage"]
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "webNavigation"
+  ]
 }
