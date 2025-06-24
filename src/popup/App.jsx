@@ -23,7 +23,6 @@ function App() {
         setGrayscale(0)
         applyFilter()
     }
-    useEffect(() => { console.log(grayscale) })
     const load = () => {
         try {
             chrome.storage.local.get(['brightness', 'contrast', 'hue', 'grayscale'], (result) => {
