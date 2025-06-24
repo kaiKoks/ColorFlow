@@ -1,3 +1,7 @@
+
+chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => 
+  addStyles(result.brightness, result.contrast, result.hue)
+)
 chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
 
   if (msg.type === 'SET_FILTER') {
@@ -5,9 +9,6 @@ chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
     addStyles(brightness, contrast, hue)
   }
 })
-
-
-
 
 function addStyles(brightness, contrast, hue) {
   const oldStyle = document.getElementById('custom-filter-style')
@@ -23,5 +24,5 @@ function addStyles(brightness, contrast, hue) {
       }
     `
   document.head.appendChild(styleTag)
-  chrome.storage.local.set({'brightness' : brightness, 'contrast': contrast, 'hue' : hue})
+  chrome.storage.local.set({ 'brightness': brightness, 'contrast': contrast, 'hue': hue })
 }

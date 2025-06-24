@@ -7,8 +7,8 @@ function App() {
     const [contrast, setContrast] = useState(100)
     const [hue, setHue] = useState(0)
 
-    const applyFilter = async () => {
-        await chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+    const applyFilter = () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
             chrome.tabs.sendMessage(tab.id, {
                 type: 'SET_FILTER',
                 payload: { brightness, contrast, hue }
@@ -22,13 +22,18 @@ function App() {
         applyFilter()
     }
     useEffect(() => {
-        if(!chrome.storage) return
-        chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => {
-            setBrightness(result.brightness || 100);
-            setContrast(result.contrast || 100);
-            setHue(result.hue || 0);
-        }, []);
-    })
+        try {
+            chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => {
+                setBrightness(result.brightness ?? 100);
+                setContrast(result.contrast ?? 100);
+                setHue(result.hue ?? 0);
+                chrome.storage.local.set({ 'brightness': brightness, 'contrast': contrast, 'hue': hue });
+            });
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }, [chrome.tabs])
     return (
         <div className="w-64 p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <h1 className="text-lg font-bold mb-4">Настройки фильтра</h1>
