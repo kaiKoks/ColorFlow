@@ -23,5 +23,5 @@ function addStyles(brightness, contrast, hue) {
       }
     `
   document.head.appendChild(styleTag)
-  chrome.storage.local.set({ brightness, contrast, hue })
+  chrome.storage.local.set({'brightness' : brightness, 'contrast': contrast, 'hue' : hue})
 }
