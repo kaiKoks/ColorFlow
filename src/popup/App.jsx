@@ -1,11 +1,6 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
-declare namespace chrome {
-  namespace tabs {
-    function query(queryInfo: any, callback: (tabs: Array<{ id: number }>) => void): void;
-    function sendMessage(tabId: number, message: any, callback?: (response: any) => void): void;
-  }
-}
+
 
 function App() {
     const [brightness, setBrightness] = useState(100)
@@ -14,7 +9,7 @@ function App() {
 
     const applyFilter = async () => {
         await chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-            chrome.tabs.sendMessage(tab.id!, {
+            chrome.tabs.sendMessage(tab.id, {
                 type: 'SET_FILTER',
                 payload: { brightness, contrast, hue }
             });
@@ -26,6 +21,14 @@ function App() {
         setHue(0)
         applyFilter()
     }
+    useEffect(() => {
+        if(!chrome.storage) return
+        chrome.storage.local.get(['brightness', 'contrast', 'hue'], (result) => {
+            setBrightness(result.brightness || 100);
+            setContrast(result.contrast || 100);
+            setHue(result.hue || 0);
+        }, []);
+    })
     return (
         <div className="w-64 p-4 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
             <h1 className="text-lg font-bold mb-4">Настройки фильтра</h1>
@@ -78,5 +81,5 @@ function App() {
         </div>
     )
 }
-const root = createRoot(document.getElementById('root')!)
+const root = createRoot(document.getElementById('root'))
 root.render(<App />)

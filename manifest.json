@@ -19,8 +19,9 @@
     "default_popup": "src/popup/index.html"
   },
   "permissions": [
+    "<all_urls>",
     "activeTab",
-    "scripting",
-    "webNavigation"
+    "scripting"
   ]
+
 }
