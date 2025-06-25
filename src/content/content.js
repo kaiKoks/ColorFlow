@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
 
 function addStyles(brightness, contrast, hue, grayscale) {
   document.querySelector('html')
-  .style.setProperty('filter', `
+    .style.setProperty('filter', `
       brightness(${brightness}%)
       contrast(${contrast}%)
       hue-rotate(${hue}deg)
