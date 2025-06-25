@@ -7,12 +7,13 @@ function App() {
     const [contrast, setContrast] = useState(100)
     const [hue, setHue] = useState(0)
     const [grayscale, setGrayscale] = useState(0)
+    const [saturation, setSaturation] = useState(100)
 
     const applyFilter = () => {
         chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
             chrome.tabs.sendMessage(tab.id, {
                 type: 'SET_FILTER',
-                payload: { brightness, contrast, hue, grayscale }
+                payload: { brightness, contrast, hue, grayscale, saturation }
             });
         });
     }
@@ -21,15 +22,17 @@ function App() {
         setContrast(100)
         setHue(0)
         setGrayscale(0)
+        setSaturation(100)
         applyFilter()
     }
-    const load = () => {
+    const load =  () => {
         try {
-            chrome.storage.local.get(['brightness', 'contrast', 'hue', 'grayscale'], (result) => {
-                setBrightness(result.brightness)
-                setContrast(result.contrast)
-                setHue(result.hue)
-                setGrayscale(result.grayscale)
+            chrome.storage.local.get(['brightness', 'contrast', 'hue', 'grayscale', 'saturation'], (result) => {
+                setBrightness(result.brightness ?? 100)
+                setContrast(result.contrast ?? 100)
+                setHue(result.hue ?? 0)
+                setGrayscale(result.grayscale ?? 0)
+                setSaturation(result.saturation ?? 100)
             });
         }
         catch (err) {
@@ -37,7 +40,7 @@ function App() {
         }
     }
     useEffect(() => { load() }, [])
-    useEffect(() => { applyFilter() }, [brightness, contrast, hue, grayscale])
+    useEffect(() => { applyFilter() }, [brightness, contrast, hue, grayscale, saturation])
 
     return (
         <div className="w-64 p-3 bg-[#0d0f13] text-[#F0F3BD] flex flex-col font-bold saturate-125  ">
@@ -86,6 +89,17 @@ function App() {
                     max="100"
                     value={grayscale}
                     onChange={(e) => setGrayscale(Number(e.target.value))}
+                    className="w-full appearance-none h-2  bg-[#3b0fa1] rounded-3xl accent-[#FAFFFD]"
+                />
+            </div>
+            <div className="mb-5">
+                <label className="block text-sm">Saturation: {saturation}%</label>
+                <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    value={saturation}
+                    onChange={(e) => setSaturation(Number(e.target.value))}
                     className="w-full appearance-none h-2  bg-[#3b0fa1] rounded-3xl accent-[#FAFFFD]"
                 />
             </div>

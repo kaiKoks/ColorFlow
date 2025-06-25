@@ -1,28 +1,29 @@
 {
   "manifest_version": 3,
-  "name": "Brightness Controller",
+  "name": "ColorFlow",
   "version": "1.0",
-  "description": "Control brightness, hue and contrast",
-  "icons": {},
-  "content_scripts": [
+  "description": "Control brightness, hue, contrast, grayscale and saturation",
+  "icons": {
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png",
+    "192": "icon192.png"
+  },
+    "content_scripts": [
     {
       "matches": [
         "<all_urls>"
       ],
       "js": [
         "src/content/content.js"
-      ],
-      "run_at": "document_end"
+      ]
     }
   ],
   "action": {
     "default_popup": "src/popup/index.html"
   },
   "permissions": [
-    "<all_urls>",
-    "activeTab",
     "scripting",
     "storage"
   ]
-
 }
